@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:title="@string/location_interval"
+        android:summary="@string/location_interval_summary"
+        android:key="location_interval"
+        android:digits="0123456789"
+        android:defaultValue="60"/>
+    <ListPreference
+        android:key="locale"
+        android:entries="@array/languages"
+        android:entryValues="@array/languages_values"
+        android:title="@string/app_locale" />
+</PreferenceScreen>
