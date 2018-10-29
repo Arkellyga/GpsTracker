@@ -20,4 +20,12 @@
         <item>en</item>
         <item>ru</item>
     </string-array>
+    <string name="alert_dialog_content">Sorry, but this permissions really needed for app. Location needed for saving your position. Storage permission needed for write your location in file, which will be save on external storage</string>
+    <string name="notification_channel_name">Gps Tracker</string>
+    <string name="notification_channel_description">This service gets your coordinates. If you disable notification, work of service can be incorrect.</string>
+    <string name="notification_longitude">Longitude = %1$f</string>
+    <string name="notification_latitude">Latitude = %1$f</string>
+    <string name="notification_time">Time = %1$s</string>
+    <string name="notification_stop">Stop service</string>
+    <string name="service_error">Can\'t start service. Check app permissions</string>
 </resources>

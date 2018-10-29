@@ -20,4 +20,12 @@
         <item>en</item>
         <item>ru</item>
     </string-array>
+    <string name="alert_dialog_content">Разрешения необходимы для нормальной работы приложения. Разрешение геолокации необходимо для получения ваших координат. Разрешение хранилища позволяет приложению сохранять ваше положение в память телефона</string>
+    <string name="notification_channel_name">Gps Трекер</string>
+    <string name="notification_channel_description">Эта служба получает ваши координаты. Если вы отключите уведомление, работа службы может некорректно работать.</string>
+    <string name="notification_longitude">Долгота = %1$f</string>
+    <string name="notification_latitude">Широта = %1$f</string>
+    <string name="notification_time">Время = %1$s</string>
+    <string name="notification_stop">Прекратить работу</string>
+    <string name="service_error">Невозможно начать работу. Проверьте разрешения приложения</string>
 </resources>

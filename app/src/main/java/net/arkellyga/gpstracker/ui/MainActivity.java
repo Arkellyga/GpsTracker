@@ -2,11 +2,14 @@ package net.arkellyga.gpstracker.ui;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int PERMISSIONS_REQUEST_CODE = 0;
 
     private Intent mService;
     private MapView mMapView;
@@ -46,14 +50,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setLocale();
+        requestStorage();
         MapKitFactory.setApiKey(BuildConfig.MapKitKey);
         MapKitFactory.initialize(this);
-        mFactory = new LocationFactory(this);
         setContentView(R.layout.activity_main);
-        mService = new Intent(MainActivity.this, TrackerService.class);
         initializeMapView();
-        requestLocation();
-        requestStorage();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFactory = new LocationFactory();
+        mService = new Intent(MainActivity.this, TrackerService.class);
         setupSpinner();
     }
 
@@ -109,33 +116,47 @@ public class MainActivity extends AppCompatActivity {
                 null);
     }
 
-    private void requestLocation() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this,
-                        new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                        0);
-            }
-        }
-    }
-
     private void requestStorage() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(this,
                         new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
-                                      Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        0);
-            }
+                                      Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                      Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_CODE);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    recreate();
+                } else {
+                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).create();
+                    dialog.setTitle(android.R.string.dialog_alert_title);
+                    dialog.setMessage(getResources().getString(R.string.alert_dialog_content));
+                    dialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                            getResources().getString(android.R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    MainActivity.this.finish();
+                                }
+                            });
+                    dialog.show();
+                }
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

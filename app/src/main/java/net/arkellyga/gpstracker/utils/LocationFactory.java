@@ -1,6 +1,5 @@
 package net.arkellyga.gpstracker.utils;
 
-import android.content.Context;
 import android.os.Environment;
 
 import org.json.JSONArray;
@@ -22,13 +21,11 @@ public class LocationFactory {
     private static final String LONGITUDE = "longitude";
 
     private static final String mFileDir = "GpsTracker";
-    private Context mContext;
     private JSONArray mArray;
     private String mFileName;
     private String[] mFiles;
 
-    public LocationFactory(Context context) {
-        mContext = context;
+    public LocationFactory() {
         //openFile();
         loadFiles();
     }
@@ -104,7 +101,7 @@ public class LocationFactory {
         if (!file.exists()) {
             file.mkdir();
         }
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-y_hh:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-y_hh:mm:ss", Locale.getDefault());
         mFileName = "track-" + df.format(new Date()) + ".js";
         mArray = new JSONArray();
     }
